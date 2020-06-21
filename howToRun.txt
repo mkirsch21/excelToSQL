@@ -1,0 +1,5 @@
+run it like this:
+python3 /home/pi/Documents/Python/excelToSqlProject/excelToSQL.py rpeTables r_account_type MD101.001 EI
+
+or :
+python3 /home/pi/Documents/Python/excelToSqlProject/excelToSQL.py rpeTables r_account_subtype MD101.002 EI
