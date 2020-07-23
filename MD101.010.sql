@@ -1,5 +1,5 @@
 ------------------------------------------------------------
--- DB_Change_ID:    MD101.002
+-- DB_Change_ID:    MD101.010
 -- DB_ASSET:        EI
 -- DB_RPE_VER:      V3_12_02_02
 ------------------------------------------------------------
@@ -11,7 +11,7 @@ DECLARE @RPVer VARCHAR(16);
 DECLARE @Asset VARCHAR(30);
 SET @NA = 'NA'
 
-SET @ScriptID = 'MD101.002';
+SET @ScriptID = 'MD101.010';
 SET @Asset = 'EI';
 SET @RPVer = 'V3_12_02_02';
 
@@ -27,11 +27,9 @@ BEGIN
 ------------------------------------------------------------
 -- This is where your script goes
 
-SET IDENTITY_INSERT dbo.r_account_subtype ON
+IF EXISTS(SELECT 1 FROM dbo.r_acc_close_rsn_x_acc_type WHERE  account_close_reason_key = 500008 and account_type_key = 12 and acount_subtype_key = NULL)UPDATE dbo.r_acc_close_rsn_x_acc_type SET active_flag = 1, updated_dttm = GETDATE(), updated_by = 0, core = 8WHERE  account_close_reason_key = 500008 and account_type_key = 12 and acount_subtype_key = NULL
 
-IF NOT EXISTS(SELECT 1 FROM dbo.r_account_subtype where code = 'ALCDIRWINE')INSERT INTO dbo.r_account_subtype(account_subtype_key, account_type_key, code, desc_short, desc_long, sequence_pos, active_flag, created_dttm, created_by, updated_dttm, updated_by, core, req_account_schedule_flag, is_external)VALUES(900001, 500001, 'ALCDIRWINE', 'DIRECT WINE SHIPPER', 'DIRECT WINE SHIPPER', 0, 1, GETDATE(), 0, GETDATE(), 0, 9, 1, 1)
-
-SET IDENTITY_INSERT dbo.r_account_subtype OFF
+IF EXISTS(SELECT 1 FROM dbo.r_acc_close_rsn_x_acc_type WHERE  account_close_reason_key = 500009 and account_type_key = 500001 and acount_subtype_key = 900001)UPDATE dbo.r_acc_close_rsn_x_acc_type SET active_flag = 1, updated_dttm = GETDATE(), updated_by = 0, core = 9WHERE  account_close_reason_key = 500009 and account_type_key = 500001 and acount_subtype_key = 900001
 
 
 -- End of your script

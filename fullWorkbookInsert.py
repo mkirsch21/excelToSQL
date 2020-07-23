@@ -3,11 +3,10 @@ import sys
 import os.path
 
 excelFileName = sys.argv[1]
-sheet = sys.argv[2]
-scriptName = sys.argv[3]
-functionalArea = sys.argv[4]
+scriptName = sys.argv[2]
+functionalArea = sys.argv[3]
 
-#git
+#
 # Creates 2d List
 #
 def setUpList(data):
@@ -52,7 +51,38 @@ def formatValues(myList):
 # Creates one full query
 #
 def createQuery(valueList, rowNames, sheetname):
-    ifStatement = "IF NOT EXISTS(SELECT 1 FROM dbo.{} where code = {})".format(sheetname, valueList[1]) + '\r'
+    if 'code' in rowNames:
+        codeString = rowNames
+        codeString = codeString.split('code', 1)[0]
+        counter = codeString.count(',')
+        uniqueCount = counter
+        whereValue = 'code = ' + valueList[uniqueCount]
+    elif 'desc_short' in rowNames:
+        desc_shortString = rowNames
+        desc_shortString = desc_shortString.split('desc_short', 1)[0]
+        counter = desc_shortString.count(',')
+        uniqueCount = counter
+        whereValue = 'desc_short = ' + valueList[uniqueCount]
+    elif '_x_' in rowNames:
+        crossRefString = rowNames
+        crossRefString = crossRefString.split(',', 1)[1]
+        crossRefStringList = crossRefString.split(',')
+        removeList = []
+        for i in crossRefStringList:
+            if '_key' not in i:
+                removeList.append(i)
+        for i in removeList:
+            crossRefStringList.remove(i)
+        whereCount = len(crossRefStringList)
+        whereValueList = valueList[1:]
+        whereValueList = whereValueList[0:whereCount]
+        whereValue = dict(zip(crossRefStringList,whereValueList))
+        whereValue = str(whereValue).replace("'",'').replace('{','').replace('}','').replace(':',' =').replace('  ', ' ').replace('"',"'").replace(',',' and')
+    else:
+        uniqueCount = 1
+        whereValue = 'core = ' + valueList[uniqueCount]
+    
+    ifStatement = "IF NOT EXISTS(SELECT 1 FROM dbo.{} where {})".format(sheetname, whereValue) + '\r'
     insertStatement = "INSERT INTO dbo.{}({})".format(sheetname, rowNames) + '\r'
     innerValue = ", ".join(str(v) for v in valueList)
     values = "VALUES({})".format(innerValue) + '\r'
@@ -65,7 +95,7 @@ def writeFile(queryList):
     header = """------------------------------------------------------------
 -- DB_Change_ID:    {}
 -- DB_ASSET:        {}
--- DB_RPE_VER:      V3_12_02_00
+-- DB_RPE_VER:      V3_12_02_02
 ------------------------------------------------------------
 DECLARE @ErrorCount INT;
 DECLARE @ShouldApply VARCHAR(5);
@@ -112,36 +142,43 @@ ELSE
 GO
 """
 
-    completePath = "/home/pi/Documents/Python/excelToSqlProject/{}.sql".format(scriptName)
+    completePath = "/Users/michaelkirschbaum/Desktop/Python/excelToSQL/{}.sql".format(scriptName)
 
     fp = open(completePath, "w")
     fp.write(header + '\n')
     for i in queryList:
-        fp.write(i + '\n')
+        fp.write(i + '\n\n')
     fp.write(footer)
     fp.close()
 
 def main():
-    workbook = openpyxl.load_workbook('/home/pi/Documents/Python/excelToSqlProject/{}.xlsx'.format(excelFileName))
-    Sheet1 = workbook['{}'.format(sheet)]
-    numOfColumns = Sheet1.max_column
-    numOfRows = Sheet1.max_row
-    sheetname = workbook['{}'.format(sheet)].title
-    sheet1Data = Sheet1.iter_rows(min_row=0,max_row=numOfRows,min_col=0,max_col=numOfColumns,values_only=True)
-
-    myList =  setUpList(sheet1Data)
-
-    rowNames = createRowNames(myList[0])
-    myList = formatValues(myList)
+    workbook = openpyxl.load_workbook('/Users/michaelkirschbaum/Desktop/Python/excelToSQL/{}.xlsx'.format(excelFileName))
 
     queryList = []
-    for i in range(1, len(myList)):
-        queryList.append(createQuery(myList[i], rowNames, sheetname))
 
- #   for i in queryList:
- #       print(i)
+    for sheet in workbook:
+        Sheet1 = workbook[sheet.title]
+        numOfColumns = Sheet1.max_column
+        numOfRows = Sheet1.max_row
+        sheetname = sheet.title
+        sheet1Data = Sheet1.iter_rows(min_row=0,max_row=numOfRows,min_col=0,max_col=numOfColumns,values_only=True)
+        myList =  setUpList(sheet1Data)
+        rowNames = createRowNames(myList[0])
+        myList = formatValues(myList)
+        identityInsertON = "SET IDENTITY_INSERT dbo.{} ON".format(sheetname)
+        identityInsertOFF = "SET IDENTITY_INSERT dbo.{} OFF".format(sheetname)
 
-    writeFile(queryList)
+        queryList.append(identityInsertON)
+
+        for i in range(1, len(myList)):
+            queryList.append(createQuery(myList[i], rowNames, sheetname))
+
+        queryList.append(identityInsertOFF)
+
+    #for i in queryList:
+    #    print(i)
+
+        writeFile(queryList)
 
 
 main()
