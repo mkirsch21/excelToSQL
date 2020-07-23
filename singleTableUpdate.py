@@ -2,6 +2,7 @@ import openpyxl
 import sys
 import os.path
 
+#Takes in user input to find which page to write a script for
 excelFileName = sys.argv[1]
 scriptName = sys.argv[2]
 sheet = sys.argv[3]
