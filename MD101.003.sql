@@ -1,5 +1,5 @@
 ------------------------------------------------------------
--- DB_Change_ID:    MD101.002
+-- DB_Change_ID:    MD101.003
 -- DB_ASSET:        EI
 -- DB_RPE_VER:      V3_12_02_02
 ------------------------------------------------------------
@@ -11,7 +11,7 @@ DECLARE @RPVer VARCHAR(16);
 DECLARE @Asset VARCHAR(30);
 SET @NA = 'NA'
 
-SET @ScriptID = 'MD101.002';
+SET @ScriptID = 'MD101.003';
 SET @Asset = 'EI';
 SET @RPVer = 'V3_12_02_02';
 
@@ -27,11 +27,15 @@ BEGIN
 ------------------------------------------------------------
 -- This is where your script goes
 
-SET IDENTITY_INSERT dbo.r_account_subtype ON
+SET IDENTITY_INSERT dbo.r_account_status ON
 
-IF NOT EXISTS(SELECT 1 FROM dbo.r_account_subtype where code = 'ALCDIRWINE')INSERT INTO dbo.r_account_subtype(account_subtype_key, account_type_key, code, desc_short, desc_long, sequence_pos, active_flag, created_dttm, created_by, updated_dttm, updated_by, core, req_account_schedule_flag, is_external)VALUES(900001, 500001, 'ALCDIRWINE', 'DIRECT WINE SHIPPER', 'DIRECT WINE SHIPPER', 0, 1, GETDATE(), 0, GETDATE(), 0, 9, 1, 1)
+IF NOT EXISTS(SELECT 1 FROM dbo.r_account_status where code = 'CLOSED')INSERT INTO dbo.r_account_status(account_status_key, code, desc_short, desc_long, sequence_pos, filter_mask, active_flag, created_dttm, created_by, updated_dttm, updated_by, core, is_closed)VALUES(2, 'CLOSED', 'CLOSED', 'CLOSED', 7, 0, 1, GETDATE(), 0, GETDATE(), 0, 2, 1)
 
-SET IDENTITY_INSERT dbo.r_account_subtype OFF
+IF NOT EXISTS(SELECT 1 FROM dbo.r_account_status where code = 'HOLD')INSERT INTO dbo.r_account_status(account_status_key, code, desc_short, desc_long, sequence_pos, filter_mask, active_flag, created_dttm, created_by, updated_dttm, updated_by, core, is_closed)VALUES(9, 'HOLD', 'HOLD', 'FILED RETURN BUT NOT REGISTERED (FEE NOT PAID)', 0, 0, 1, GETDATE(), 0, GETDATE(), 0, 1, 0)
+
+IF NOT EXISTS(SELECT 1 FROM dbo.r_account_status where code = 'OPEN')INSERT INTO dbo.r_account_status(account_status_key, code, desc_short, desc_long, sequence_pos, filter_mask, active_flag, created_dttm, created_by, updated_dttm, updated_by, core, is_closed)VALUES(12, 'OPEN', 'OPEN', 'OPEN', 1, 0, 1, GETDATE(), 0, GETDATE(), 0, 2, 0)
+
+SET IDENTITY_INSERT dbo.r_account_status OFF
 
 
 -- End of your script

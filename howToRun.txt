@@ -1,8 +1,16 @@
-run it like this:
-python3 /home/pi/Documents/Python/excelToSqlProject/excelToSQL.py rpeTables r_account_type MD101.001 EI
 
-or :
-python3 /home/pi/Documents/Python/excelToSqlProject/excelToSQL.py rpeTables r_account_subtype MD101.002 EI
+run single table insert:
+python3 /home/pi/Documents/Python/excelToSqlProject/singleTableInsert.py rpeTables MD101.001 r_account_type EI
+"python version, file path for script, name of excel file without .xlsx, name of script you want to output without .sql, sheet/table name, functional area"
 
-This is how I run it on my raspberry pi. Yours will differ depending on the file location of the script/documents.
-Put all the documents in the same folder. The first parameter is the python script, second = name of the excel doc, third = name of the excel sheet within the excel doc, fourth = name of the sql script you that it will print out, fifth = functional area of the script it is writing to.
+run all tables in excel booklet insert:
+python3 /home/pi/Documents/Python/excelToSqlProject/fullWorkbookInsert.py rpeTables MD101.004 EI
+"python version, file path for script, name of excel file without .xlsx, name of script you want to output without .sql, functional area"
+
+run single table update:
+python3 /home/pi/Documents/Python/excelToSqlProject/singleTableUpdate.py rpeTables MD101.005 r_account_type EI
+"python version, file path for script, name of excel file without .xlsx, name of script you want to output without .sql, sheet/table name, functional area"
+
+run all tables in excel booklet update:
+python3 /home/pi/Documents/Python/excelToSqlProject/fullWorkbookUpdate.py rpeTables MD101.008 EI
+"python version, file path for script, name of excel file without .xlsx, name of script you want to output without .sql, functional area"
