@@ -6,6 +6,8 @@ excelFileName = sys.argv[1]
 scriptName = sys.argv[2]
 functionalArea = sys.argv[3]
 
+fileLocation = '/Users/michaelkirschbaum/Desktop/Python/excelToSQL/'
+
 ##
 # Creates 2d List
 #
@@ -147,7 +149,7 @@ ELSE
 GO
 """
 
-    completePath = "/Users/michaelkirschbaum/Desktop/Python/excelToSQL/{}.sql".format(scriptName)
+    completePath = "{}{}.sql".format(fileLocation,scriptName)
 
     fp = open(completePath, "w")
     fp.write(header + '\n')
@@ -157,7 +159,7 @@ GO
     fp.close()
 
 def main():
-    workbook = openpyxl.load_workbook('/Users/michaelkirschbaum/Desktop/Python/excelToSQL/{}.xlsx'.format(excelFileName))
+    workbook = openpyxl.load_workbook('{}{}.xlsx'.format(fileLocation,excelFileName))
 
     queryList = []
 
