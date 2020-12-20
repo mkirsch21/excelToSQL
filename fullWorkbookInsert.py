@@ -2,9 +2,15 @@ import openpyxl
 import sys
 import os.path
 
-excelFileName = sys.argv[1]
+#excelFileName = sys.argv[1]
+functionalArea = sys.argv[1]
 scriptName = sys.argv[2]
-functionalArea = sys.argv[3]
+
+if functionalArea == 'EI':
+    excelFileName = 'rpeTables'
+else:
+    excelFileName = 'rpeTables'
+
 
 fileLocation = '/Users/michaelkirschbaum/Desktop/Python/excelToSQL/'
 
@@ -22,7 +28,7 @@ def setUpList(data):
 def prettyPrint(myList):
     for i in range(len(myList)):
         for j in range(len(myList[i])):
-            print(str(myList[i][j]), '\t', end =" ")
+            print(str(myList[i][j]), '\t')
         print()
 
 #
